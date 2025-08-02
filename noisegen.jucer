@@ -4,7 +4,18 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="nZtGIE" name="noisegen">
     <GROUP id="{D4320B04-C241-3158-0848-E8E11560A4E0}" name="Source">
-      <FILE id="CPsa5p" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{1F557B60-883D-34B0-1B8D-248DF39EC8A2}" name="Core">
+        <FILE id="Ad66Vw" name="NoiseGenerator.h" compile="0" resource="0"
+              file="Source/Core/NoiseGenerator.h"/>
+        <FILE id="sv3DTK" name="NoiseRunner.cpp" compile="1" resource="0" file="Source/Core/NoiseRunner.cpp"/>
+        <FILE id="pjwFiR" name="NoiseRunner.h" compile="0" resource="0" file="Source/Core/NoiseRunner.h"/>
+        <FILE id="V6TKPy" name="WhiteNoise.cpp" compile="1" resource="0" file="Source/Core/WhiteNoise.cpp"/>
+        <FILE id="OirmLo" name="WhiteNoise.h" compile="0" resource="0" file="Source/Core/WhiteNoise.h"/>
+      </GROUP>
+      <GROUP id="{32A84F87-334A-BD1C-AB97-745DEF4ABAF5}" name="Runs">
+        <FILE id="VGkxw8" name="RunWhiteNoise.cpp" compile="1" resource="0"
+              file="Source/Runs/RunWhiteNoise.cpp"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <MODULES>
