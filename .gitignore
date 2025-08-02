@@ -1,0 +1,17 @@
+Builds/
+JuceLibraryCode/
+
+.DS_Store
+Thumbs.db
+*.sln
+*.vcxproj*
+*.xcworkspace
+*.idea/
+*.vs/
+
+*.exe
+*.app
+*.o
+*.obj
+*.bin
+*.wav
