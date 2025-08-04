@@ -3,8 +3,13 @@
 <JUCERPROJECT id="dUVqUE" name="noisegen" projectType="consoleapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="nZtGIE" name="noisegen">
+    <GROUP id="{D3BC2022-88A6-56AF-5E89-672170C2EED4}" name="Core"/>
     <GROUP id="{D4320B04-C241-3158-0848-E8E11560A4E0}" name="Source">
       <GROUP id="{1F557B60-883D-34B0-1B8D-248DF39EC8A2}" name="Core">
+        <FILE id="wHWZd2" name="BrownNoise.cpp" compile="1" resource="0" file="Source/Core/BrownNoise.cpp"/>
+        <FILE id="Yqchcr" name="BrownNoise.h" compile="0" resource="0" file="Source/Core/BrownNoise.h"/>
+        <FILE id="UTUbt9" name="PinkNoise.h" compile="0" resource="0" file="Source/Core/PinkNoise.h"/>
+        <FILE id="nrNIiQ" name="PinkNoise.cpp" compile="1" resource="0" file="Source/Core/PinkNoise.cpp"/>
         <FILE id="Ad66Vw" name="NoiseGenerator.h" compile="0" resource="0"
               file="Source/Core/NoiseGenerator.h"/>
         <FILE id="sv3DTK" name="NoiseRunner.cpp" compile="1" resource="0" file="Source/Core/NoiseRunner.cpp"/>
@@ -13,6 +18,10 @@
         <FILE id="OirmLo" name="WhiteNoise.h" compile="0" resource="0" file="Source/Core/WhiteNoise.h"/>
       </GROUP>
       <GROUP id="{32A84F87-334A-BD1C-AB97-745DEF4ABAF5}" name="Runs">
+        <FILE id="Uez9Td" name="RunBrownNoise.cpp" compile="1" resource="0"
+              file="Source/Runs/RunBrownNoise.cpp"/>
+        <FILE id="S44nmT" name="RunPinkNoise.cpp" compile="1" resource="0"
+              file="Source/Runs/RunPinkNoise.cpp"/>
         <FILE id="VGkxw8" name="RunWhiteNoise.cpp" compile="1" resource="0"
               file="Source/Runs/RunWhiteNoise.cpp"/>
       </GROUP>
