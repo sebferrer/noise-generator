@@ -18,10 +18,10 @@
         <FILE id="OirmLo" name="WhiteNoise.h" compile="0" resource="0" file="Source/Core/WhiteNoise.h"/>
       </GROUP>
       <GROUP id="{32A84F87-334A-BD1C-AB97-745DEF4ABAF5}" name="Runs">
-        <FILE id="Uez9Td" name="RunBrownNoise.cpp" compile="1" resource="0"
-              file="Source/Runs/RunBrownNoise.cpp"/>
         <FILE id="S44nmT" name="RunPinkNoise.cpp" compile="1" resource="0"
               file="Source/Runs/RunPinkNoise.cpp"/>
+        <FILE id="Uez9Td" name="RunBrownNoise.cpp" compile="1" resource="0"
+              file="Source/Runs/RunBrownNoise.cpp"/>
         <FILE id="VGkxw8" name="RunWhiteNoise.cpp" compile="1" resource="0"
               file="Source/Runs/RunWhiteNoise.cpp"/>
       </GROUP>
@@ -47,6 +47,7 @@
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="noisegen"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="noisegen"/>
+        <CONFIGURATION isDebug="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../juce-8.0.8-windows/JUCE/modules"/>
