@@ -1,5 +1,6 @@
 Builds/
 JuceLibraryCode/
+build
 
 .DS_Store
 Thumbs.db
@@ -15,3 +16,5 @@ Thumbs.db
 *.obj
 *.bin
 *.wav
+
+build_and_run.ps1
