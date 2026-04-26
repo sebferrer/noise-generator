@@ -1,7 +1,8 @@
 Builds/
 JuceLibraryCode/
-build
-cmake-build
+build/
+cmake-build/
+node_modules/
 
 .DS_Store
 Thumbs.db

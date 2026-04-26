@@ -10,7 +10,14 @@ int main() {
     SimplePinkNoise simplePinkNoise(1.0f);
     BrownNoise brownNoise(1.0f);
     PinkNoise pinkNoise(1.0f, 0.85f, true);
-    SpectrogramMessage messageGen(44100.0f, 200.0f);
+
+    // SpectrogramMessage::Mode::TextDevLille
+    // SpectrogramMessage::Mode::QRCode
+    auto mode = SpectrogramMessage::Mode::TextDevLille;
+    
+    float pixelDuration = (mode == SpectrogramMessage::Mode::QRCode) ? 50.0f : 200.0f;
+
+    SpectrogramMessage messageGen(44100.0f, mode, pixelDuration);
 
     // NoiseRunner::run(whiteNoise, "white_noise.wav");
     // NoiseRunner::run(simplePinkNoise, "pink_noise_lowpass.wav");

@@ -4,11 +4,18 @@
 
 class SpectrogramMessage : public NoiseGenerator {
 public:
-    SpectrogramMessage(float sampleRate = 44100.0f, float pixelDurationMs = 200.0f);
+    enum class Mode {
+        TextDevLille,
+        QRCode
+    };
+
+    SpectrogramMessage(float sampleRate = 44100.0f, Mode mode = Mode::QRCode, float pixelDurationMs = 50.0f);
     void fillBuffer(juce::AudioBuffer<float>& buffer) override;
 
 private:
     float sampleRate;
+    Mode currentMode;
+    int numRows;
     
     struct PixelBand {
         std::vector<float> phases;
