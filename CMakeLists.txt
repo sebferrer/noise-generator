@@ -20,6 +20,8 @@ target_sources(noisegen PRIVATE
     Source/Core/PinkNoise.h
     Source/Core/SimplePinkNoise.cpp
     Source/Core/SimplePinkNoise.h
+    Source/Core/SpectrogramMessage.cpp
+    Source/Core/SpectrogramMessage.h
     Source/Core/BrownNoise.cpp
     Source/Core/BrownNoise.h
     Source/Core/NoiseGenerator.h

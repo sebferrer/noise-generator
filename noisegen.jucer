@@ -6,6 +6,8 @@
     <GROUP id="{D3BC2022-88A6-56AF-5E89-672170C2EED4}" name="Core"/>
     <GROUP id="{D4320B04-C241-3158-0848-E8E11560A4E0}" name="Source">
       <GROUP id="{1F557B60-883D-34B0-1B8D-248DF39EC8A2}" name="Core">
+        <FILE id="SMcpp" name="SpectrogramMessage.cpp" compile="1" resource="0" file="Source/Core/SpectrogramMessage.cpp"/>
+        <FILE id="SMh" name="SpectrogramMessage.h" compile="0" resource="0" file="Source/Core/SpectrogramMessage.h"/>
         <FILE id="WLMEtp" name="PinkNoise.cpp" compile="1" resource="0" file="Source/Core/PinkNoise.cpp"/>
         <FILE id="JcEiJV" name="PinkNoise.h" compile="0" resource="0" file="Source/Core/PinkNoise.h"/>
         <FILE id="zVTcAd" name="SimplePinkNoise.cpp" compile="1" resource="0"
