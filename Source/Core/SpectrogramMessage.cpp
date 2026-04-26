@@ -1,29 +1,56 @@
 #include "SpectrogramMessage.h"
 #include <cmath>
+#include <juce_core/juce_core.h>
 
-SpectrogramMessage::SpectrogramMessage(float sr) : sampleRate(sr) {
-    samplesPerColumn = (int)(sampleRate * 0.15f); // 150ms per column (pixel width)
+SpectrogramMessage::SpectrogramMessage(float sr, float pixelDurationMs) : sampleRate(sr) {
+    samplesPerColumn = (int)(sampleRate * (pixelDurationMs / 1000.0f));
 
-    // Frequencies for our 5 rows (Y axis of the image)
-    // Index 0 is the top of the image (highest frequency)
+    int numOscillatorsPerBand = 20; 
+    float bandWidth = 800.0f;
+
     for (int i = 0; i < 5; ++i) {
-        Oscillator osc;
-        osc.frequency = 6000.0f - (i * 1000.0f); // 6000, 5000, 4000, 3000, 2000 Hz
-        osc.phaseIncrement = juce::MathConstants<float>::twoPi * osc.frequency / sampleRate;
-        oscillators.push_back(osc);
+        PixelBand band;
+        float startFreq = 6000.0f - (i * 1000.0f); 
+        
+        for (int o = 0; o < numOscillatorsPerBand; ++o) {
+            float freq = startFreq + (o * (bandWidth / numOscillatorsPerBand));
+            band.phases.push_back(0.0f);
+            band.phaseIncrements.push_back(juce::MathConstants<float>::twoPi * freq / sampleRate);
+        }
+        bands.push_back(band);
     }
 
-    // We draw "HI!" column by column (1 = sine wave ON, 0 = sine wave OFF)
     imageColumns = {
-        // Space
         {0,0,0,0,0}, {0,0,0,0,0},
-        // H
-        {1,1,1,1,1}, {0,0,1,0,0}, {1,1,1,1,1}, {0,0,0,0,0},
+        // D
+        {1,1,1,1,1}, {1,0,0,0,1}, {0,1,1,1,0}, {0,0,0,0,0},
+        // E
+        {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,0,1}, {0,0,0,0,0},
+        // V
+        {1,1,0,0,0}, {0,0,1,1,0}, {0,0,0,0,1}, {0,0,1,1,0}, {1,1,0,0,0}, {0,0,0,0,0},
+        // L
+        {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, {0,0,0,0,0},
         // I
         {1,0,0,0,1}, {1,1,1,1,1}, {1,0,0,0,1}, {0,0,0,0,0},
-        // !
-        {1,1,1,0,1}, {0,0,0,0,0},
+        // L
+        {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, {0,0,0,0,0},
+        // L
+        {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, {0,0,0,0,0},
+        // E
+        {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,0,1}, {0,0,0,0,0},
+        
         // Space
+        {0,0,0,0,0}, {0,0,0,0,0},
+        
+        // 2
+        {1,0,1,1,1}, {1,0,1,0,1}, {1,1,1,0,1}, {0,0,0,0,0},
+        // 0
+        {1,1,1,1,1}, {1,0,0,0,1}, {1,1,1,1,1}, {0,0,0,0,0},
+        // 2
+        {1,0,1,1,1}, {1,0,1,0,1}, {1,1,1,0,1}, {0,0,0,0,0},
+        // 6
+        {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,1,1}, {0,0,0,0,0},
+        
         {0,0,0,0,0}, {0,0,0,0,0}
     };
 }
@@ -32,17 +59,15 @@ void SpectrogramMessage::fillBuffer(juce::AudioBuffer<float>& buffer) {
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
 
-    // Generate mono audio first
     juce::AudioBuffer<float> temp(1, numSamples);
     float* out = temp.getWritePointer(0);
 
     for (int i = 0; i < numSamples; ++i) {
-        // Move to the next pixel column if enough time has passed
         if (sampleCounter >= samplesPerColumn) {
             sampleCounter = 0;
             currentPixelColumn++;
             if (currentPixelColumn >= imageColumns.size()) {
-                currentPixelColumn = 0; // Loop the message forever
+                currentPixelColumn = 0;
             }
         }
 
@@ -50,20 +75,17 @@ void SpectrogramMessage::fillBuffer(juce::AudioBuffer<float>& buffer) {
 
         float sampleVal = 0.0f;
         for (int r = 0; r < 5; ++r) {
-            auto& osc = oscillators[r];
+            auto& band = bands[r];
             
-            // Set target amplitude based on pixel state
-            osc.targetAmplitude = (col[r] == 1) ? 0.15f : 0.0f;
+            band.targetAmplitude = (col[r] == 1) ? 0.015f : 0.0f;
+            band.currentAmplitude += (band.targetAmplitude - band.currentAmplitude) * 0.005f;
 
-            // Smooth the amplitude to avoid audio clicks when a pixel turns on/off
-            osc.currentAmplitude += (osc.targetAmplitude - osc.currentAmplitude) * 0.005f;
-
-            // Generate sine wave
-            sampleVal += std::sin(osc.phase) * osc.currentAmplitude;
-            
-            osc.phase += osc.phaseIncrement;
-            if (osc.phase >= juce::MathConstants<float>::twoPi) {
-                osc.phase -= juce::MathConstants<float>::twoPi;
+            for (size_t o = 0; o < band.phases.size(); ++o) {
+                sampleVal += std::sin(band.phases[o]) * band.currentAmplitude;
+                band.phases[o] += band.phaseIncrements[o];
+                if (band.phases[o] >= juce::MathConstants<float>::twoPi) {
+                    band.phases[o] -= juce::MathConstants<float>::twoPi;
+                }
             }
         }
 
@@ -71,7 +93,6 @@ void SpectrogramMessage::fillBuffer(juce::AudioBuffer<float>& buffer) {
         sampleCounter++;
     }
 
-    // Copy the mono generation to all output channels
     for (int ch = 0; ch < numChannels; ++ch) {
         buffer.copyFrom(ch, 0, temp, 0, 0, numSamples);
     }
