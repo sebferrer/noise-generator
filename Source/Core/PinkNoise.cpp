@@ -1,8 +1,9 @@
 #include "PinkNoise.h"
 
-PinkNoise::PinkNoise(float amplitudeIn, float softnessIn)
+PinkNoise::PinkNoise(float amplitudeIn, float softnessIn, bool useLowpassFilterIn)
     : amplitude(amplitudeIn),
-      softness(juce::jlimit(0.0f, 1.0f, softnessIn))
+      softness(juce::jlimit(0.0f, 1.0f, softnessIn)),
+      useLowpassFilter(useLowpassFilterIn)
 {
     smoothing = softness * 0.999f;
 }
@@ -35,9 +36,12 @@ void PinkNoise::fillBuffer(juce::AudioBuffer<float>& buffer) {
             float pink = runningSum / static_cast<float>(numRows);
 
             // Soft filtering depending on softness
-            filterState = smoothing * filterState + (1.0f - smoothing) * pink;
-
-            data[i] = amplitude * filterState;
+            if (useLowpassFilter) {
+                filterState = smoothing * filterState + (1.0f - smoothing) * pink;
+                data[i] = amplitude * filterState;
+            } else {
+                data[i] = amplitude * pink;
+            }
         }
     }
 }

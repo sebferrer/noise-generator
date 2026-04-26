@@ -8,7 +8,7 @@ int main() {
     WhiteNoise whiteNoise(1.0f);
     SimplePinkNoise simplePinkNoise(1.0f);
     BrownNoise brownNoise(1.0f);
-    PinkNoise pinkNoise(1.0f, 0.85f);
+    PinkNoise pinkNoise(1.0f, 0.85f, true);
 
     // NoiseRunner::run(whiteNoise, "white_noise.wav");
     // NoiseRunner::run(simplePinkNoise, "pink_noise_lowpass.wav");

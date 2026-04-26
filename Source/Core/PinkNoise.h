@@ -5,13 +5,14 @@
 
 class PinkNoise : public NoiseGenerator {
 public:
-    PinkNoise(float amplitudeIn = 1.0f, float softnessIn = 0.8f); // [0.0 - 1.0]
+    PinkNoise(float amplitudeIn = 1.0f, float softnessIn = 0.8f, bool useLowpassFilterIn = true); // [0.0 - 1.0]
     void fillBuffer(juce::AudioBuffer<float>& buffer) override;
 
 private:
     float amplitude;
     float softness;
     float smoothing;
+    bool useLowpassFilter;
     juce::Random random;
 
     // Voss-McCartney state
