@@ -1,13 +1,60 @@
 #include "SpectrogramMessage.h"
 #include <cmath>
 #include <juce_core/juce_core.h>
+#include <cctype>
 
-SpectrogramMessage::SpectrogramMessage(float sr, Mode mode, float pixelDurationMs) 
-    : sampleRate(sr), currentMode(mode) 
+namespace {
+    std::vector<std::vector<int>> getCharColumns(char c) {
+        c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+        switch(c) {
+            case 'A': return {{1,1,1,1,1}, {1,0,1,0,0}, {1,1,1,1,1}};
+            case 'B': return {{1,1,1,1,1}, {1,0,1,0,1}, {0,1,0,1,0}};
+            case 'C': return {{0,1,1,1,0}, {1,0,0,0,1}, {1,0,0,0,1}};
+            case 'D': return {{1,1,1,1,1}, {1,0,0,0,1}, {0,1,1,1,0}};
+            case 'E': return {{1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,0,1}};
+            case 'F': return {{1,1,1,1,1}, {1,0,1,0,0}, {1,0,1,0,0}};
+            case 'G': return {{0,1,1,1,0}, {1,0,0,0,1}, {1,0,1,1,1}};
+            case 'H': return {{1,1,1,1,1}, {0,0,1,0,0}, {1,1,1,1,1}};
+            case 'I': return {{1,0,0,0,1}, {1,1,1,1,1}, {1,0,0,0,1}};
+            case 'J': return {{0,0,0,1,1}, {1,0,0,0,1}, {1,1,1,1,0}};
+            case 'K': return {{1,1,1,1,1}, {0,0,1,0,0}, {0,1,0,1,0}, {1,0,0,0,1}};
+            case 'L': return {{1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}};
+            case 'M': return {{1,1,1,1,1}, {0,1,0,0,0}, {0,0,1,0,0}, {0,1,0,0,0}, {1,1,1,1,1}};
+            case 'N': return {{1,1,1,1,1}, {0,1,0,0,0}, {0,0,1,0,0}, {0,0,0,1,0}, {1,1,1,1,1}};
+            case 'O': return {{0,1,1,1,0}, {1,0,0,0,1}, {0,1,1,1,0}};
+            case 'P': return {{1,1,1,1,1}, {1,0,1,0,0}, {0,1,0,0,0}};
+            case 'Q': return {{0,1,1,1,0}, {1,0,0,0,1}, {0,1,1,1,1}};
+            case 'R': return {{1,1,1,1,1}, {1,0,1,0,0}, {0,1,0,1,1}};
+            case 'S': return {{0,1,1,0,1}, {1,0,1,0,1}, {1,0,0,1,0}};
+            case 'T': return {{1,0,0,0,0}, {1,1,1,1,1}, {1,0,0,0,0}};
+            case 'U': return {{1,1,1,1,0}, {0,0,0,0,1}, {1,1,1,1,0}};
+            case 'V': return {{1,1,0,0,0}, {0,0,1,1,0}, {0,0,0,0,1}, {0,0,1,1,0}, {1,1,0,0,0}};
+            case 'W': return {{1,1,1,1,1}, {0,0,0,1,0}, {0,0,1,0,0}, {0,0,0,1,0}, {1,1,1,1,1}};
+            case 'X': return {{1,0,0,0,1}, {0,1,0,1,0}, {0,0,1,0,0}, {0,1,0,1,0}, {1,0,0,0,1}};
+            case 'Y': return {{1,1,0,0,0}, {0,0,1,0,0}, {0,0,0,1,1}, {0,0,1,0,0}, {1,1,0,0,0}};
+            case 'Z': return {{1,0,0,1,1}, {1,0,1,0,1}, {1,1,0,0,1}};
+            case '0': return {{1,1,1,1,1}, {1,0,0,0,1}, {1,1,1,1,1}};
+            case '1': return {{0,1,0,0,0}, {1,1,1,1,1}, {0,0,0,0,0}};
+            case '2': return {{1,0,1,1,1}, {1,0,1,0,1}, {1,1,1,0,1}};
+            case '3': return {{1,0,1,0,1}, {1,0,1,0,1}, {1,1,1,1,1}};
+            case '4': return {{1,1,1,0,0}, {0,0,1,0,0}, {1,1,1,1,1}};
+            case '5': return {{1,1,1,0,1}, {1,0,1,0,1}, {1,0,1,1,1}};
+            case '6': return {{1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,1,1}};
+            case '7': return {{1,0,0,0,0}, {1,0,0,0,0}, {1,1,1,1,1}};
+            case '8': return {{1,1,1,1,1}, {1,0,1,0,1}, {1,1,1,1,1}};
+            case '9': return {{1,1,1,0,1}, {1,0,1,0,1}, {1,1,1,1,1}};
+            case ' ': return {{0,0,0,0,0}, {0,0,0,0,0}};
+            default: return {};
+        }
+    }
+}
+
+SpectrogramMessage::SpectrogramMessage(float sr, Mode mode, float pixelDurationMs, const std::string& text) 
+    : sampleRate(sr), currentMode(mode), textMessage(text) 
 {
     samplesPerColumn = (int)(sampleRate * (pixelDurationMs / 1000.0f));
 
-    if (mode == Mode::TextDevLille) {
+    if (mode == Mode::Text) {
         numRows = 5;
         int numOscillatorsPerBand = 20; 
         float bandWidth = 800.0f;
@@ -27,36 +74,19 @@ SpectrogramMessage::SpectrogramMessage(float sr, Mode mode, float pixelDurationM
         }
 
         std::vector<int> emptySpace(5, 0);
+        imageColumns.insert(imageColumns.end(), 5, emptySpace); // padding
 
-        imageColumns = {
-            emptySpace, emptySpace, emptySpace, emptySpace, emptySpace,
-            // D
-            {1,1,1,1,1}, {1,0,0,0,1}, {0,1,1,1,0}, emptySpace,
-            // E
-            {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,0,1}, emptySpace,
-            // V
-            {1,1,0,0,0}, {0,0,1,1,0}, {0,0,0,0,1}, {0,0,1,1,0}, {1,1,0,0,0}, emptySpace,
-            // L
-            {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, emptySpace,
-            // I
-            {1,0,0,0,1}, {1,1,1,1,1}, {1,0,0,0,1}, emptySpace,
-            // L
-            {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, emptySpace,
-            // L
-            {1,1,1,1,1}, {0,0,0,0,1}, {0,0,0,0,1}, emptySpace,
-            // E
-            {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,0,1}, emptySpace,
-            emptySpace, emptySpace,
-            // 2
-            {1,0,1,1,1}, {1,0,1,0,1}, {1,1,1,0,1}, emptySpace,
-            // 0
-            {1,1,1,1,1}, {1,0,0,0,1}, {1,1,1,1,1}, emptySpace,
-            // 2
-            {1,0,1,1,1}, {1,0,1,0,1}, {1,1,1,0,1}, emptySpace,
-            // 6
-            {1,1,1,1,1}, {1,0,1,0,1}, {1,0,1,1,1}, emptySpace,
-            emptySpace, emptySpace, emptySpace, emptySpace, emptySpace
-        };
+        for (char c : textMessage) {
+            auto cols = getCharColumns(c);
+            if (!cols.empty()) {
+                for (const auto& col : cols) {
+                    imageColumns.push_back(col);
+                }
+                imageColumns.push_back(emptySpace); // space between letters
+            }
+        }
+
+        imageColumns.insert(imageColumns.end(), 5, emptySpace); // padding
     } 
     else if (mode == Mode::QRCode) {
         numRows = 25; 

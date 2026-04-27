@@ -11,13 +11,12 @@ int main() {
     BrownNoise brownNoise(1.0f);
     PinkNoise pinkNoise(1.0f, 0.85f, true);
 
-    // SpectrogramMessage::Mode::TextDevLille
-    // SpectrogramMessage::Mode::QRCode
-    auto mode = SpectrogramMessage::Mode::TextDevLille;
+    // auto mode = SpectrogramMessage::Mode::Text;
+    auto mode = SpectrogramMessage::Mode::QRCode;
     
     float pixelDuration = (mode == SpectrogramMessage::Mode::QRCode) ? 50.0f : 200.0f;
 
-    SpectrogramMessage messageGen(44100.0f, mode, pixelDuration);
+    SpectrogramMessage messageGen(44100.0f, mode, pixelDuration, "DEVLILLE 2026");
 
     // NoiseRunner::run(whiteNoise, "white_noise.wav");
     // NoiseRunner::run(simplePinkNoise, "pink_noise_lowpass.wav");
